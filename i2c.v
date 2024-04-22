@@ -5,7 +5,7 @@ module i2c (
     output reg i2c_sda_t,
     output i2c_scl,
     input [1:0] sw,
-    output reg [1:0] active
+    output [1:0] active
 );
 
     wire [9:0] inst_address;

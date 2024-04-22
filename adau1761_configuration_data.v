@@ -5,7 +5,7 @@ module adau1761_configuration_data(
 );
 
 always @(posedge clk) begin
-    case(address)
+    case(address) 
         10'b0000000000: data <= 9'b011101111;
         10'b0000000001: data <= 9'b101110110;
         10'b0000000010: data <= 9'b101000000;
