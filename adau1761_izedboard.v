@@ -24,6 +24,12 @@ wire i2c_sda_i, i2c_sda_o, i2c_sda_t;
 wire i2s_bclk, i2s_lr;
 wire i2s_MOSI, i2s_MISO;
 
+// Initialize ADDR0 and ADDR1
+initial begin
+    AC_ADR0 = 1'b1;
+    AC_ADR1 = 1'b1;
+end
+
 // Connection assignments
 assign AC_GPIO0 = i2s_MISO;
 assign i2s_MOSI = AC_GPIO1;
@@ -31,11 +37,14 @@ assign i2s_bclk = AC_GPIO2;
 assign i2s_lr = AC_GPIO3;
 assign AC_MCLK = codec_master_clk;
 assign AC_SCK = i2c_scl;
-assign AC_ADR0 = 1'b1;
-assign AC_ADR1 = 1'b1;
 
 // IOBUF for bidirectional SDA
-assign AC_SDA = i2c_sda_i; //wtf this is not right.
+IOBUF IOBUF_inst (
+   .O(i2c_sda_i),     // Buffer output
+   .IO(AC_SDA),   // Buffer inout port (connect directly to top-level port)
+   .I(i2c_sda_o),     // Buffer input
+   .T(i2c_sda_t)      // 3-state enable input, high=input, low=output
+);
 
 // Instantiate components
 i2c Inst_i2c (
