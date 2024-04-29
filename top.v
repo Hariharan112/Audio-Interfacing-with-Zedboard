@@ -34,20 +34,21 @@ module audio_top (
     input hphone_l_valid,
     input [23:0] hphone_r,
     input hphone_r_valid_dummy,     // dummy valid signal to create AXIS interface in Vivado (r and l channel synchronous to hphone_l_valid
-    output reg [23:0] line_in_l,               // samples from "line in" jack
-    output reg [23:0] line_in_r,
-    output reg new_sample,                      // active for 1 clk cycle if new "line in" sample is transmitted/received
-    output reg sample_clk_48k              // sample clock (new sample at rising edge)
+    output [23:0] line_in_l,               // samples from "line in" jack
+    output [23:0] line_in_r,
+    output new_sample,                      // active for 1 clk cycle if new "line in" sample is transmitted/received
+    output sample_clk_48k              // sample clock (new sample at rising edge)
 );
 
 wire clk_48;                                          // Master clock (48 MHz) of the design
-reg new_sample_100;                           // New samples signal in the 100 MHz domain
+wire new_sample_100;                           // New samples signal in the 100 MHz domain
 wire [23:0] line_in_l_freeze_48, line_in_r_freeze_48;   // "Line in" signals from I2S receiver to external interface (are frozen by the I2S receiver)
-reg sample_clk_48k_d1_48, sample_clk_48k_d2_48, sample_clk_48k_d3_48;   // Delay and synchronization registers for the sample clock (48k)
-reg sample_clk_48k_d4_100, sample_clk_48k_d5_100, sample_clk_48k_d6_100; // For CDC 100 -> 48 MHz freeze registers
-reg [23:0] hphone_l_freeze_100, hphone_r_freeze_100;     // For CDC 100 -> 48 MHz freeze registers
+wire sample_clk_48k_d1_48, sample_clk_48k_d2_48, sample_clk_48k_d3_48;   // Delay and synchronization registers for the sample clock (48k)
+wire sample_clk_48k_d4_100, sample_clk_48k_d5_100, sample_clk_48k_d6_100; // For CDC 100 -> 48 MHz freeze registers
+wire [23:0] hphone_l_freeze_100, hphone_r_freeze_100;     // For CDC 100 -> 48 MHz freeze registers
 wire hphone_valid;                            // Internal signal for hphone_l_valid
 
+assign hphone_valid = hphone_l_valid;
 
 clocking i_clocking (
     .CLK_100(clk_100),
@@ -76,8 +77,6 @@ adau1761_izedboard Inst_adau1761_izedboard (
     .sw({2'b00}),                                  // All switches signals are tied to 0
     .active()
 );
-
-assign hphone_valid = hphone_l_valid;
 
 always @(posedge clk_48) begin
     // Shift sample clock for synchronization

@@ -2,12 +2,12 @@ module adau1761_izedboard (
     input wire clk_48,
     output reg AC_ADR0,
     output reg AC_ADR1,
-    output  AC_GPIO0,
-    input wire AC_GPIO1,
-    input wire AC_GPIO2,
-    input wire AC_GPIO3,
-    output  AC_MCLK,
-    output  AC_SCK,
+    output reg AC_GPIO0,  // I2S MISO
+    input wire AC_GPIO1,  // I2S MOSI
+    input wire AC_GPIO2,  // I2S BCLK
+    input wire AC_GPIO3,  // I2S LRCLK
+    output reg AC_MCLK,
+    output reg AC_SCK,
     inout wire AC_SDA,
     input wire [23:0] hphone_l,
     input wire [23:0] hphone_r,
@@ -18,17 +18,15 @@ module adau1761_izedboard (
     output reg [1:0] active
 );
 
-reg codec_master_clk;
-reg i2c_scl;
+wire audio_l [15:0];
+wire audio_r [15:0];
+wire codec_master_clk;
+
+
+wire i2c_scl;
 wire i2c_sda_i, i2c_sda_o, i2c_sda_t;
 wire i2s_bclk, i2s_lr;
 wire i2s_MOSI, i2s_MISO;
-
-// Initialize ADDR0 and ADDR1
-initial begin
-    AC_ADR0 = 1'b1;
-    AC_ADR1 = 1'b1;
-end
 
 // Connection assignments
 assign AC_GPIO0 = i2s_MISO;
@@ -37,14 +35,12 @@ assign i2s_bclk = AC_GPIO2;
 assign i2s_lr = AC_GPIO3;
 assign AC_MCLK = codec_master_clk;
 assign AC_SCK = i2c_scl;
+assign AC_ADR0 = 1'b1;
+assign AC_ADR1 = 1'b1;
 
-// IOBUF for bidirectional SDA
-IOBUF IOBUF_inst (
-   .O(i2c_sda_i),     // Buffer output
-   .IO(AC_SDA),   // Buffer inout port (connect directly to top-level port)
-   .I(i2c_sda_o),     // Buffer input
-   .T(i2c_sda_t)      // 3-state enable input, high=input, low=output
-);
+// IOBUF for bidirectional SDA. I'm not sure if this works?
+assign AC_SDA = i2c_sda_t ? 1'bz : i2c_sda_o;
+assign i2c_sda_i = AC_SDA;
 
 // Instantiate components
 i2c Inst_i2c (

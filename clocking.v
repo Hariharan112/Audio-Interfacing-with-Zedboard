@@ -1,3 +1,4 @@
+// Entire module will change now
 module clocking (
     input wire CLK_100,   // 100MHz input clock
     input wire RESET,     // Reset input
