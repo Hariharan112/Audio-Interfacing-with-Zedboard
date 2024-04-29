@@ -62,7 +62,7 @@ module i3c2 #(parameter clk_divide = 8'd0) (
                     i2c_scl <= 1;
                     debug_scl <= 1;
 
-                    if (bitcount == {1'b0, clk_divide[clk_divide'high :1]})
+                    if (bitcount == {1'b0, clk_divide[7:1]})
                         i2c_sda_t <= 0;
 
                     if (bitcount == 0) begin
@@ -79,7 +79,7 @@ module i3c2 #(parameter clk_divide = 8'd0) (
             // scl is always 0 on entry
             // set data half way through low half of clk cycle
                 begin
-                    if (bitcount == (clk_divide - {2'b00, clk_divide[clk_divide'high : 2]})) begin
+                    if (bitcount == (clk_divide - {2'b00, clk_divide[7: 2]})) begin
                         if (i2c_data[8] == 0)
                             i2c_sda_t <= 0;
                         else
@@ -87,7 +87,7 @@ module i3c2 #(parameter clk_divide = 8'd0) (
                     end
 
                     // raise clk halfway through
-                    if (bitcount == {1'b0, clk_divide[clk_divide'high:1]}) begin
+                    if (bitcount == {1'b0, clk_divide[7:1]}) begin
                         i2c_scl <= 1;
                         debug_scl <= 1;
 
@@ -123,13 +123,13 @@ module i3c2 #(parameter clk_divide = 8'd0) (
             // clk stays high and data goes high halfway through a bit
                 begin
                     i2c_started <= 0;
-                    if (bitcount == clk_divide - {2'b00, clk_divide[clk_divide'high:2]})
+                    if (bitcount == clk_divide - {2'b00, clk_divide[7:2]})
                         i2c_sda_t <= 0;
-                    if (bitcount == {1'b0, clk_divide[clk_divide'high :1]}) begin
+                    if (bitcount == {1'b0, clk_divide[7:1]}) begin
                         i2c_scl <= 1;
                         debug_scl <= 1;
                     end
-                    if (bitcount == {2'b00, clk_divide[clk_divide'high :2]})
+                    if (bitcount == {2'b00, clk_divide[7:2]})
                         i2c_sda_t <= 1;
 
                     if (bitcount == 0) begin

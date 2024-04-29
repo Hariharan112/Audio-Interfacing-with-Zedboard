@@ -1,13 +1,13 @@
 module adau1761_izedboard (
     input wire clk_48,
-    output reg AC_ADR0,
-    output reg AC_ADR1,
-    output reg AC_GPIO0,  // I2S MISO
+    output  AC_ADR0,
+    output  AC_ADR1,
+    output  AC_GPIO0,  // I2S MISO
     input wire AC_GPIO1,  // I2S MOSI
     input wire AC_GPIO2,  // I2S BCLK
     input wire AC_GPIO3,  // I2S LRCLK
-    output reg AC_MCLK,
-    output reg AC_SCK,
+    output  AC_MCLK,
+    output  AC_SCK,
     inout wire AC_SDA,
     input wire [23:0] hphone_l,
     input wire [23:0] hphone_r,
